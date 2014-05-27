@@ -1,3 +1,13 @@
+/***************************************************************************************
+ *
+ * Title:       Roberto, the pastis serving robot
+ * Version:     v1.0
+ * Date:        2014-05-27
+ * Author:      Karl Kangur <karl.kangur@gmail.com>
+ * Website:     https://github.com/Robopoly/Roberto
+ * Licence:     LGPL
+ *
+ ***************************************************************************************/
 #ifndef ROBERTO_H
 #define ROBERTO_H
 
