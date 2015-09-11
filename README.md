@@ -42,10 +42,6 @@ In idle mode, while waiting for a cup to be inserted or removed, it moves and to
 
 The debug mode allows to enter a special mode that lets the user toggle on or off the lights, pump and show the sensor status on the LCD screen. To exit this mode the MCU has to be reset using the on-board button in front of the robot.
 
-## Hardware design
-
-The ears and hands are 3d printed. Only the ears are available as the others have gone lost (or unusable designs). The ears are identical and can easily be 3d printed.
-
 ## Credits
 
 This project has been an ongoing one and a lot of people have been working on it without whom this wonderful robot would've never existed.
