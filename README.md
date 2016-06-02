@@ -46,13 +46,15 @@ The debug mode allows to enter a special mode that lets the user toggle on or of
 
 The ears and hands are 3d printed. Only the ears are available as the others have gone lost (or unusable designs). The ears are identical and can easily be 3d printed.
 
+The power system has been revised in May 2016, leading to the design of a new pump drive PCB featuring a MOSFET transistor. DC 5V regulation is now performed by Robopoly’s Power-Board instead of not-so-efficient linear regulators.
+
 ## Credits
 
 This project has been an ongoing one and a lot of people have been working on it without whom this wonderful robot would've never existed.
 
-| Contribution       | Name                              |
-|--------------------|-----------------------------------|
-| Creator            | Steven Roelofsen                  |
-| Programmer         | Karl Kangur                       |
-| Electronics        | Marco Pagnamenta, Benjamin Bonnal |
-| Cabling, mechanics | Lobsang Blanchard                 |
+| Contribution       | Name                              				|
+|--------------------|-------------------------------------------------------------|
+| Creator            | Steven Roelofsen                  				|
+| Programmer         | Karl Kangur                       				|
+| Electronics        | Marco Pagnamenta, Benjamin Bonnal, Paul-Edouard Sarlin 	|
+| Cabling, mechanics | Lobsang Blanchard                 				|
