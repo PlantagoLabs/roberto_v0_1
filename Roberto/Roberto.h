@@ -55,30 +55,40 @@
 
 #define TYPE_RICARD 0
 #define TYPE_SYRUP 1
+#define TYPE_COCKTAILS 2                    // !!!
+
 
 #define MODE_MANUAL 0
 #define MODE_AUTOMATIC 1
 
 // input pin definitions
-#define INPUT_CUP          0
-#define INPUT_FLOW         1
-#define INPUT_BUTTON       10
-#define INPUT_ARM_CONTACT  11
+//#define INPUT_CUP           0          // need to change to be a value for the load cell
+#define INPUT_FLOW          1
+#define INPUT_BUTTON        10         // need to change to have two buttons
+//#define INPUT_BUTTON_2               // need to change to have two buttons             // !!!
+#define INPUT_ARM_CONTACT   11
+#define INPUT_SCALE_DAT     5          // need to change to have
+#define INPUT_SCALE_CLK     5        // need to change to have
 
 // output pin definitions
-#define OUTPUT_PUMP        9
-#define OUTPUT_EYE_LEFT_RED    A2
-#define OUTPUT_EYE_LEFT_GREEN  A1
-#define OUTPUT_EYE_LEFT_BLUE   A0
+#define OUTPUT_PUMP             9
+#define OUTPUT_EYE_LEFT_RED     A2
+#define OUTPUT_EYE_LEFT_GREEN   A1
+#define OUTPUT_EYE_LEFT_BLUE    A0
 #define OUTPUT_EYE_RIGHT_RED    A5
 #define OUTPUT_EYE_RIGHT_GREEN  A4
 #define OUTPUT_EYE_RIGHT_BLUE   A3
 
 // condition macros
-#define COND_CUP_IS_PRESENT digitalRead(INPUT_CUP)
+#define SCALE_VALUE             scale.get_units()
+#define MIN_VAL_MASS_CUP_DETEC  2                         //Mass of PP Cup
+#define MASS_LIQUID_PUMPED      150                       //Mass in gram 
+///#define COND_CUP_IS_PRESENT  digitalRead(INPUT_CUP)          // need to change. 
+
 #define COND_ARMS_TOUCH digitalRead(INPUT_ARM_CONTACT)
-#define COND_LIQUID_DETECT digitalRead(INPUT_FLOW)
-#define COND_BUTTON_PRESSED digitalRead(INPUT_BUTTON)
+
+#define COND_LIQUID_DETECT digitalRead(INPUT_FLOW)          // need to change, no flow detector  ///!!!
+#define COND_BUTTON_PRESSED digitalRead(INPUT_BUTTON) 
 
 // othe macros
 #define MACRO_PUMP_ON digitalWrite(OUTPUT_PUMP, HIGH)
@@ -105,5 +115,13 @@ enum return_codes
 
 #define ENTRY_STATE STATE_WAITING_CUP
 
-#endif
+  return_codes stateWaitingCup();
+  return_codes stateMovingArmsIn();
+  return_codes statePouring();
+  return_codes stateMovingRightArmOut();
+  return_codes stateRemoveCup();
+  return_codes stateMovingArmsOut();
 
+
+
+#endif

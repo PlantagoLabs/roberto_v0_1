@@ -1,3 +1,5 @@
+#include <LiquidCrystal.h>
+
 /***************************************************************************************
  *
  * Title:       Roberto, the pastis serving robot
@@ -13,6 +15,7 @@
 #include <EEPROM.h>
 #include "Roberto.h"
 #include <robopolyLCD.h>
+#include "HX711.h"
 
 Servo servoEarLeft;
 Servo servoEarRight;
@@ -66,6 +69,10 @@ uint8_t liquidType;
 uint8_t servingMode;
 uint8_t debugMode;
 
+HX711 scale(INPUT_SCALE_DAT, INPUT_SCALE_CLK);            //!!!!!!!!
+
+float calibration_factor = 6260;                //Calibration factor found by test on the SparkFun Calibration program ///!!!!!!!!
+
 void setup()
 {
   // light up the eyes in red (debug)
@@ -117,10 +124,17 @@ void setup()
   
   // normal eye color
   eyes(0, 1, 1);
+
+  //Reset the scale to 0
+  scale.tare(); 
 }
 
 void loop()
 {
+
+  scale.set_scale(calibration_factor);  //Adjust to this calibration factor
+
+  
   // debug mode shows the sensor values on lcd
   if(debugMode)
   {
@@ -166,9 +180,9 @@ void loop()
       }
     }
     
-    String line1 = "CUP: ";
-    line1 += digitalRead(INPUT_CUP);
-    line1 += ", FLOW: ";
+  //  String line1 = "CUP: ";
+  //  line1 += digitalRead(INPUT_CUP);
+    String line1 = "FLOW: ";
     line1 += digitalRead(INPUT_FLOW);
     
     String line2 = "BTN: ";
@@ -198,6 +212,7 @@ void loop()
     {
       // clear input (typically the remaining "\n" character)
       case '1':
+                                                                                                //need NEW make pouringTime Into Loadcell value
         // clear the input buffer
         memset(buffer, 0, sizeof(buffer));
         // wait for user input, 16 character or 15 and a "\n" termination character
@@ -213,6 +228,7 @@ void loop()
         Serial.setTimeout(1000);
         break;
       case '2':
+                                                                                                      //need NEW make pouringTime Into Loadcell value
         Serial.print("Current pouring time: ");
         Serial.print((EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1));
         Serial.println("ms");
@@ -227,8 +243,8 @@ void loop()
         Serial.println(" times");
         break;
       case '4':
-        Serial.print("Sensors: CUP=");
-        Serial.print(digitalRead(INPUT_CUP));
+     //   Serial.print("Sensors: CUP=");
+     //   Serial.print(digitalRead(INPUT_CUP));
         Serial.print(", ARM_CONTACT=");
         Serial.print(digitalRead(INPUT_ARM_CONTACT));
         Serial.print(", FLOW=");
@@ -245,6 +261,7 @@ void loop()
         Serial.setTimeout(1000);
         break;
       case '6':
+                                                                                                      //need NEW No types or new state 2 where multiple cocktails are available
         Serial.println("Change liquid type: 0 = Ricard, 1 = syrup");
         memset(buffer, 0, sizeof(buffer));
         Serial.setTimeout(5000);
@@ -298,6 +315,7 @@ return_codes stateWaitingCup()
         lcd("Le robot serveur", "de Robopoly");
         break;
       case 2:
+                                                                                                      //need NEW case 2: two cocktails TYPE_COCKTAILS
         if(liquidType == TYPE_RICARD)
         {
           lcd("Je sers du", "RICARD");
@@ -307,7 +325,8 @@ return_codes stateWaitingCup()
           lcd("Je sers du", "sirop");
         }
         break;
-      case 3:
+      case 3:                                                                                                //need NEW message for case 2
+
         if(liquidType == TYPE_RICARD)
         {
           lcd("Pour seulement", "7 petits francs");
@@ -343,6 +362,7 @@ return_codes stateWaitingCup()
             lcd(message, "fois servis");
             break;
           case 1:
+                                                                                                          //NEW pouringTime will be a bonus data with the load cell
             itoa(pouringTime, message, 10);
             lcd(message, "temps de debit");
             break;
@@ -407,7 +427,7 @@ return_codes stateWaitingCup()
     }
   }
   
-  if(COND_CUP_IS_PRESENT)
+  if(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC)                    //!!!
   {
     // turn eyes white
     eyes(1, 1, 1);
@@ -420,7 +440,7 @@ return_codes stateWaitingCup()
       lcd("Goblet insere", "Payer l'humain");
       while(!COND_BUTTON_PRESSED)
       {
-        if(!COND_CUP_IS_PRESENT)
+        if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))             //!!!
         {
           return REPEAT;
         }
@@ -440,7 +460,7 @@ return_codes stateWaitingCup()
 return_codes stateMovingArmsIn()
 {
   Serial.println("State: moving arms in");
-  
+                                                                                                  //need NEW liquide TYPE
   if(liquidType == TYPE_RICARD)
   {
     lcd("Et un Ricard", "un vrai!");
@@ -454,7 +474,7 @@ return_codes stateMovingArmsIn()
   uint32_t waitAfterCut = millis() + TIME_WAIT_AFTER_CUP_INSERT;
   while(waitAfterCut > millis())
   {
-    if(!COND_CUP_IS_PRESENT)
+    if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       lcd("Erreur: goblet", "enleve");
       Serial.println("Error: cup was removed");
@@ -477,7 +497,7 @@ return_codes stateMovingArmsIn()
       return FAIL;
     }
     
-    if(!COND_CUP_IS_PRESENT)
+    if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       lcd("Erreur: goblet", "enleve");
       Serial.println("Error: cup was removed");
@@ -507,7 +527,8 @@ return_codes statePouring()
 
   // timeout if there's no liquid after some time
   uint32_t timeout = millis() + TIME_LIQUID_SENSOR_REACH;
-  while(!COND_LIQUID_DETECT)
+  uint32_t MassCupEmpty = SCALE_VALUE;
+  while(!((MassCupEmpty + 2) > SCALE_VALUE ))        //!!!  interval of +2 incase of noise will need to change with the mouvement                            Patrick. What is this supposed to do?    
   {
     // arms can be blocked, so a timeout is needed
     if(millis() > timeout)
@@ -520,11 +541,11 @@ return_codes statePouring()
     }
     
     // check for cup presence
-    if(!COND_CUP_IS_PRESENT)
+    if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       eyes(1, 0, 0);
       MACRO_PUMP_OFF;
-      lcd("Erreur: goblet", "enleve");
+      lcd("Erreur: gobelet", "enleve");
       Serial.println("Error: cup was removed");
       delay(TIME_EAR_MOVE_CUP_REMOVE);
       return FAIL;
@@ -538,10 +559,11 @@ return_codes statePouring()
   start = millis();
   time = start + pouringTime;
   bowTieTime = start + TIME_BOWTIE_TOGGLE;
-  while((now = millis()) < time)
+  uint32_t MassCupFull = MassCupEmpty + MASS_LIQUID_PUMPED;    //!!!!!!!!!!!!!!!!!!!!!!!!
+  while(SCALE_VALUE < MassCupFull)              //!!!!!!!!!!!!!!!!!!!!!!!!
   {
     // check for cup presence
-    if(!COND_CUP_IS_PRESENT)
+    if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       eyes(1, 0, 0);
       // stop pump
@@ -567,7 +589,7 @@ return_codes statePouring()
         servoBowTie.write(SERVO_BOWTIE_RIGHT);
       }
       
-      // display feedback on lcd: in % when pouring and timeout in case of fail
+      // display feedback on lcd: in % when pouring and timeout in case of fail //!!!!!!! The percent can be done with weight
       percent = 100 * (now - start) / pouringTime;
       memset(progress, 0, sizeof(progress));
       itoa(percent, progress, 10);
@@ -651,7 +673,7 @@ return_codes stateRemoveCup()
   while(timeout > millis())
   {
     // cup is still in the robot hand
-    if(COND_CUP_IS_PRESENT)
+    if((SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       timeout = millis() + TIME_WAIT_AFTER_CUP_REMOVE;
     }
