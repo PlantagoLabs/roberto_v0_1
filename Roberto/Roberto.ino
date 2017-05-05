@@ -1,5 +1,3 @@
-#include <LiquidCrystal.h>
-
 /***************************************************************************************
  *
  * Title:       Roberto, the pastis serving robot
@@ -82,11 +80,11 @@ void setup()
   Serial.begin(9600);
   
   // configure servo motors
-  servoArmLeft.attach(4);
-  servoArmRight.attach(5);
-  servoBowTie.attach(6);
-  servoEarRight.attach(8);
-  servoEarLeft.attach(7);
+  servoArmLeft.attach(OUTPUT_SERVO_ARM_LEFT);
+  servoArmRight.attach(OUTPUT_SERVO_ARM_RIGHT);
+  servoBowTie.attach(OUTPUT_SERVO_BOWTIE);
+  servoEarRight.attach(OUTPUT_SERVO_RIGHT_EAR);
+  servoEarLeft.attach(OUTPUT_SERVO_LEFT_BAR);
   
   // initialise servo positions
   servoArmLeft.write(SERVO_ARM_LEFT_OPEN);
@@ -180,9 +178,9 @@ void loop()
       }
     }
     
-  //  String line1 = "CUP: ";
-  //  line1 += digitalRead(INPUT_CUP);
-    String line1 = "FLOW: ";
+    String line1 = "CUP: ";
+    line1 += digitalRead(INPUT_CUP);
+    line1 += ", FLOW: ";
     line1 += digitalRead(INPUT_FLOW);
     
     String line2 = "BTN: ";
@@ -243,8 +241,8 @@ void loop()
         Serial.println(" times");
         break;
       case '4':
-     //   Serial.print("Sensors: CUP=");
-     //   Serial.print(digitalRead(INPUT_CUP));
+        Serial.print("Sensors: CUP=");
+        Serial.print(digitalRead(INPUT_CUP));
         Serial.print(", ARM_CONTACT=");
         Serial.print(digitalRead(INPUT_ARM_CONTACT));
         Serial.print(", FLOW=");
@@ -528,7 +526,7 @@ return_codes statePouring()
   // timeout if there's no liquid after some time
   uint32_t timeout = millis() + TIME_LIQUID_SENSOR_REACH;
   uint32_t MassCupEmpty = SCALE_VALUE;
-  while(!((MassCupEmpty + 2) > SCALE_VALUE ))        //!!!  interval of +2 incase of noise will need to change with the mouvement                            Patrick. What is this supposed to do?    
+  while(!((MassCupEmpty + 2) > SCALE_VALUE)))        //!!!  interval of +2 incase of noise will need to change with the mouvement                                
   {
     // arms can be blocked, so a timeout is needed
     if(millis() > timeout)
@@ -545,7 +543,7 @@ return_codes statePouring()
     {
       eyes(1, 0, 0);
       MACRO_PUMP_OFF;
-      lcd("Erreur: gobelet", "enleve");
+      lcd("Erreur: goblet", "enleve");
       Serial.println("Error: cup was removed");
       delay(TIME_EAR_MOVE_CUP_REMOVE);
       return FAIL;
@@ -589,7 +587,7 @@ return_codes statePouring()
         servoBowTie.write(SERVO_BOWTIE_RIGHT);
       }
       
-      // display feedback on lcd: in % when pouring and timeout in case of fail //!!!!!!! The percent can be done with weight
+      // display feedback on lcd: in % when pouring and timeout in case of fail
       percent = 100 * (now - start) / pouringTime;
       memset(progress, 0, sizeof(progress));
       itoa(percent, progress, 10);

@@ -68,7 +68,7 @@
 //#define INPUT_BUTTON_2               // need to change to have two buttons             // !!!
 #define INPUT_ARM_CONTACT   11
 #define INPUT_SCALE_DAT     5          // need to change to have
-#define INPUT_SCALE_CLK     5        // need to change to have
+#define INPUT_SCALE_CLK     4           // need to change to have
 
 // output pin definitions
 #define OUTPUT_PUMP             9
@@ -79,9 +79,16 @@
 #define OUTPUT_EYE_RIGHT_GREEN  A4
 #define OUTPUT_EYE_RIGHT_BLUE   A3
 
+#define OUTPUT_SERVO_ARM_LEFT 4
+#define OUTPUT_SERVO_ARM_RIGHT 5
+#define OUTPUT_SERVO_BOWTIE 6
+#define OUTPUT_SERVO_LEFT_EAR 7
+#define OUTPUT_SERVO_RIGHT_EAR 8
+
+
 // condition macros
 #define SCALE_VALUE             scale.get_units()
-#define MIN_VAL_MASS_CUP_DETEC  2                         //Mass of PP Cup
+#define MIN_VAL_MASS_CUP_DETEC  10                         //Mass of PP Cup
 #define MASS_LIQUID_PUMPED      150                       //Mass in gram 
 ///#define COND_CUP_IS_PRESENT  digitalRead(INPUT_CUP)          // need to change. 
 
@@ -121,7 +128,5 @@ enum return_codes
   return_codes stateMovingRightArmOut();
   return_codes stateRemoveCup();
   return_codes stateMovingArmsOut();
-
-
 
 #endif
