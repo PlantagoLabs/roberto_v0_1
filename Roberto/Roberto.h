@@ -11,18 +11,18 @@
 #ifndef ROBERTO_H
 #define ROBERTO_H
 
-#define LED 13
+
 
 // servo motor positions
 #define SERVO_ARM_LEFT_OPEN 60
 #define SERVO_ARM_LEFT_HALF_OPEN 140
-#define SERVO_ARM_LEFT_CLOSED 154
+#define SERVO_ARM_LEFT_CLOSED 152 // was 154
 #define SERVO_ARM_RIGHT_OPEN 140
-#define SERVO_ARM_RIGHT_CLOSED 35
+#define SERVO_ARM_RIGHT_CLOSED 38 // was 35
 #define SERVO_BOWTIE_CENTER 66
 #define SERVO_BOWTIE_RIGHT SERVO_BOWTIE_CENTER + 20
 #define SERVO_BOWTIE_LEFT SERVO_BOWTIE_CENTER - 20
-#define SERVO_EAR_RIGHT_CENTER 90
+#define SERVO_EAR_RIGHT_CENTER 70
 #define SERVO_EAR_RIGHT_FORWARDS SERVO_EAR_RIGHT_CENTER + 30
 #define SERVO_EAR_RIGHT_BACK SERVO_EAR_RIGHT_CENTER - 30
 #define SERVO_EAR_LEFT_CENTER 100
@@ -66,18 +66,19 @@
 #define INPUT_FLOW          1
 #define INPUT_BUTTON        10         // need to change to have two buttons
 //#define INPUT_BUTTON_2               // need to change to have two buttons             // !!!
-#define INPUT_ARM_CONTACT   11
-#define INPUT_SCALE_DAT     5          // need to change to have
-#define INPUT_SCALE_CLK     4           // need to change to have
+#define INPUT_ARM_CONTACT   0
+#define INPUT_SCALE_DAT     13          // need to change to have
+#define INPUT_SCALE_CLK     12          // need to change to have
 
 // output pin definitions
 #define OUTPUT_PUMP             9
-#define OUTPUT_EYE_LEFT_RED     A2
-#define OUTPUT_EYE_LEFT_GREEN   A1
-#define OUTPUT_EYE_LEFT_BLUE    A0
-#define OUTPUT_EYE_RIGHT_RED    A5
-#define OUTPUT_EYE_RIGHT_GREEN  A4
-#define OUTPUT_EYE_RIGHT_BLUE   A3
+#define OUTPUT_EYE_LEFT_RED     A3 // was A2
+#define OUTPUT_EYE_LEFT_GREEN   A4 // was A1
+#define OUTPUT_EYE_LEFT_BLUE    A5
+
+#define OUTPUT_EYE_RIGHT_RED    A0 // was A5
+#define OUTPUT_EYE_RIGHT_GREEN  A1 // was A4
+#define OUTPUT_EYE_RIGHT_BLUE   A2
 
 #define OUTPUT_SERVO_ARM_LEFT 4
 #define OUTPUT_SERVO_ARM_RIGHT 5
@@ -88,8 +89,8 @@
 
 // condition macros
 #define SCALE_VALUE             scale.get_units()
-#define MIN_VAL_MASS_CUP_DETEC  10                         //Mass of PP Cup
-#define MASS_LIQUID_PUMPED      150                       //Mass in gram 
+#define MIN_VAL_MASS_CUP_DETEC  10.0f                         //Mass of PP Cup
+#define MASS_LIQUID_PUMPED      150.0f                       //Mass in gram 
 ///#define COND_CUP_IS_PRESENT  digitalRead(INPUT_CUP)          // need to change. 
 
 #define COND_ARMS_TOUCH digitalRead(INPUT_ARM_CONTACT)
@@ -97,11 +98,11 @@
 #define COND_LIQUID_DETECT digitalRead(INPUT_FLOW)          // need to change, no flow detector  ///!!!
 #define COND_BUTTON_PRESSED digitalRead(INPUT_BUTTON) 
 
-// othe macros
+// other macros
 #define MACRO_PUMP_ON digitalWrite(OUTPUT_PUMP, HIGH)
 #define MACRO_PUMP_OFF digitalWrite(OUTPUT_PUMP, LOW)
-#define LED_ON digitalWrite(LED, HIGH)
-#define LED_OFF digitalWrite(LED, LOW)
+//#define LED_ON digitalWrite(LED, HIGH)
+//#define LED_OFF digitalWrite(LED, LOW)
 
 enum state_codes
 {

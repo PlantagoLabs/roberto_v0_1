@@ -1,4 +1,4 @@
-/***************************************************************************************
+ /***************************************************************************************
  *
  * Title:       Roberto, the pastis serving robot
  * Version:     v1.0
@@ -73,8 +73,112 @@ float calibration_factor = 6260;                //Calibration factor found by te
 
 void setup()
 {
+
+
+
+/* Serial.begin(9600);
+
+ scale.tare();
+ scale.set_scale(calibration_factor);
+
+ while(1)
+ {
+  Serial.println(SCALE_VALUE);
+  delay(500);
+ }*/
+/*// ******************************************************** BEGIN DEBUG ************************************** !!!!!!
+
+ Serial.begin(9600);
+
+
+  // set port modes
+//  pinMode(LED, OUTPUT);
+  pinMode(OUTPUT_PUMP, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_BLUE, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_BLUE, OUTPUT);
+
+
+  pinMode(INPUT_ARM_CONTACT, INPUT);
+
+
+  digitalWrite(OUTPUT_EYE_LEFT_RED, HIGH);
+  digitalWrite(OUTPUT_EYE_LEFT_GREEN, LOW);
+  digitalWrite(OUTPUT_EYE_LEFT_BLUE, LOW);
+  digitalWrite(OUTPUT_EYE_RIGHT_RED, HIGH);
+  digitalWrite(OUTPUT_EYE_RIGHT_GREEN, LOW);
+  digitalWrite(OUTPUT_EYE_RIGHT_BLUE, LOW);
+
+  delay(1000);
+
+  eyes(0,1,0);
+
+  delay(1000);
+  eyes(0,0,1);
+
+
+
+servoArmLeft.attach(OUTPUT_SERVO_ARM_LEFT);
+servoArmLeft.write(SERVO_ARM_LEFT_OPEN);
+
+servoArmRight.attach(OUTPUT_SERVO_ARM_RIGHT);
+servoArmRight.write(SERVO_ARM_RIGHT_OPEN);
+
+servoBowTie.attach(OUTPUT_SERVO_BOWTIE);
+servoBowTie.write(SERVO_BOWTIE_CENTER);
+delay(200);
+servoBowTie.write(SERVO_BOWTIE_LEFT);
+delay(1000);
+servoBowTie.write(SERVO_BOWTIE_RIGHT);
+
+
+servoEarRight.attach(OUTPUT_SERVO_RIGHT_EAR);
+servoEarRight.write(SERVO_EAR_RIGHT_CENTER);
+delay(200);
+servoEarRight.write(SERVO_EAR_RIGHT_FORWARDS);
+delay(1000);
+servoEarRight.write(SERVO_EAR_RIGHT_BACK);
+
+servoEarLeft.attach(OUTPUT_SERVO_LEFT_EAR);
+servoEarLeft.write(SERVO_EAR_LEFT_CENTER);
+delay(200);
+servoEarLeft.write(SERVO_EAR_LEFT_FORWARDS);
+delay(1000);
+servoEarLeft.write(SERVO_EAR_LEFT_BACK);
+
+MACRO_PUMP_ON;
+
+delay(500);
+MACRO_PUMP_OFF;
+
+while(1)
+{
+  Serial.println(COND_ARMS_TOUCH);
+}
+  while(1)
+  ;
+
+
+// ******************************************************** END DEBUG ************************************** !!!!!!  */
+
+
+  pinMode(OUTPUT_PUMP, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_BLUE, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_BLUE, OUTPUT);
+
+  pinMode(INPUT_ARM_CONTACT, INPUT);
+  
   // light up the eyes in red (debug)
   eyes(1, 0, 0);
+
+  
   
   // set up serial communication for debug and configuration
   Serial.begin(9600);
@@ -84,7 +188,7 @@ void setup()
   servoArmRight.attach(OUTPUT_SERVO_ARM_RIGHT);
   servoBowTie.attach(OUTPUT_SERVO_BOWTIE);
   servoEarRight.attach(OUTPUT_SERVO_RIGHT_EAR);
-  servoEarLeft.attach(OUTPUT_SERVO_LEFT_BAR);
+  servoEarLeft.attach(OUTPUT_SERVO_LEFT_EAR);
   
   // initialise servo positions
   servoArmLeft.write(SERVO_ARM_LEFT_OPEN);
@@ -93,15 +197,7 @@ void setup()
   servoEarRight.write(SERVO_EAR_RIGHT_CENTER);
   servoEarLeft.write(SERVO_EAR_LEFT_CENTER);
   
-  // set port modes
-  pinMode(LED, OUTPUT);
-  pinMode(OUTPUT_PUMP, OUTPUT);
-  pinMode(OUTPUT_EYE_LEFT_RED, OUTPUT);
-  pinMode(OUTPUT_EYE_LEFT_GREEN, OUTPUT);
-  pinMode(OUTPUT_EYE_LEFT_BLUE, OUTPUT);
-  pinMode(OUTPUT_EYE_RIGHT_RED, OUTPUT);
-  pinMode(OUTPUT_EYE_RIGHT_GREEN, OUTPUT);
-  pinMode(OUTPUT_EYE_RIGHT_BLUE, OUTPUT);
+
   
   // load data from memory
   pouringTime = (EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1);
@@ -179,7 +275,7 @@ void loop()
     }
     
     String line1 = "CUP: ";
-    line1 += digitalRead(INPUT_CUP);
+//    line1 += digitalRead(INPUT_CUP);
     line1 += ", FLOW: ";
     line1 += digitalRead(INPUT_FLOW);
     
@@ -242,7 +338,7 @@ void loop()
         break;
       case '4':
         Serial.print("Sensors: CUP=");
-        Serial.print(digitalRead(INPUT_CUP));
+    //    Serial.print(digitalRead(INPUT_CUP));
         Serial.print(", ARM_CONTACT=");
         Serial.print(digitalRead(INPUT_ARM_CONTACT));
         Serial.print(", FLOW=");
@@ -335,9 +431,13 @@ return_codes stateWaitingCup()
         }
         break;
     }
+
     
     Serial.println("State: waiting for cup");
-    
+    Serial.println("weight in cup holder ");
+    Serial.print(SCALE_VALUE);
+    Serial.print("  ");
+    Serial.print(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC);
     // toggle the next state, modulo 4
     idleState = (idleState + 1) & 0b11;
     
@@ -382,13 +482,13 @@ return_codes stateWaitingCup()
     nextBlink = millis() + 2000 * random(1, 5);
   }
   
-  static uint32_t ledToggleTime = millis() + TIME_HEARTBEAT;
-  if(millis() > ledToggleTime)
-  {
+//  static uint32_t ledToggleTime = millis() + TIME_HEARTBEAT;
+//  if(millis() > ledToggleTime)
+//  {
     // toggle the onboard LED
-    digitalWrite(LED, !digitalRead(LED));
-    ledToggleTime = millis() + TIME_HEARTBEAT;
-  }
+//    digitalWrite(LED, !digitalRead(LED));
+//    ledToggleTime = millis() + TIME_HEARTBEAT;
+//  }
   
   static uint32_t bowTieMoveTime = millis() + TIME_BOWTIEMOVE * random(1, 10);
   if(millis() > bowTieMoveTime)
@@ -425,8 +525,11 @@ return_codes stateWaitingCup()
     }
   }
   
+
+  
   if(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC)                    //!!!
   {
+    //Serial.println("I'm in the if");
     // turn eyes white
     eyes(1, 1, 1);
     
@@ -516,7 +619,7 @@ return_codes statePouring()
   uint8_t percent;
   char progress[4];
   
-  LED_OFF;
+//  LED_OFF;
   
   Serial.println("State: pouring");
   eyes(0, 1, 0);
@@ -526,7 +629,7 @@ return_codes statePouring()
   // timeout if there's no liquid after some time
   uint32_t timeout = millis() + TIME_LIQUID_SENSOR_REACH;
   uint32_t MassCupEmpty = SCALE_VALUE;
-  while(!((MassCupEmpty + 2) > SCALE_VALUE)))        //!!!  interval of +2 incase of noise will need to change with the mouvement                                
+  while(!((MassCupEmpty + 2) > SCALE_VALUE))        //!!!  interval of +2 incase of noise will need to change with the mouvement                                
   {
     // arms can be blocked, so a timeout is needed
     if(millis() > timeout)
@@ -551,7 +654,7 @@ return_codes statePouring()
   }
   
   // turn on the LED to indicate when the sensor detected the liquid
-  LED_ON;
+//  LED_ON;
   
   // actually start pouring
   start = millis();
@@ -609,7 +712,7 @@ return_codes statePouring()
       Serial.println(progress);
       
       // also toggle the led
-      digitalWrite(LED, !digitalRead(LED));
+//      digitalWrite(LED, !digitalRead(LED));
       bowTieTime = millis() + TIME_BOWTIE_TOGGLE;
     }
   }
@@ -620,7 +723,7 @@ return_codes statePouring()
   MACRO_PUMP_OFF;
   
   // turn the LED off to show when exactly the pump was turned off
-  LED_OFF;
+//  LED_OFF;
   
   // put bow tie back to center
   servoBowTie.write(SERVO_BOWTIE_CENTER);
