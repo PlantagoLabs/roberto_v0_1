@@ -62,7 +62,7 @@ enum return_codes returnCode;
 return_codes (*stateFunction)(void);
 
 // time from start of liquid pouring in milliseconds
-uint16_t pouringTime;
+uint16_t pouredWeight;
 uint8_t liquidType;
 uint8_t servingMode;
 uint8_t debugMode;
@@ -200,7 +200,7 @@ while(1)
 
   
   // load data from memory
-  pouringTime = (EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1);
+  pouredWeight = (EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1);
   liquidType = EEPROM.read(EEPROM_TYPE);
   servingMode = EEPROM.read(EEPROM_MODE);
   
@@ -276,8 +276,8 @@ void loop()
     
     String line1 = "CUP: ";
 //    line1 += digitalRead(INPUT_CUP);
-    line1 += ", FLOW: ";
-    line1 += digitalRead(INPUT_FLOW);
+//    line1 += ", FLOW: ";
+//    line1 += digitalRead(INPUT_FLOW);
     
     String line2 = "BTN: ";
     line2 += digitalRead(INPUT_BUTTON);
@@ -311,21 +311,21 @@ void loop()
         memset(buffer, 0, sizeof(buffer));
         // wait for user input, 16 character or 15 and a "\n" termination character
         Serial.setTimeout(5000);
-        Serial.println("Enter new pouring time in milliseconds");
+        Serial.println("Enter new pouring weight in grams");
         Serial.readBytesUntil('\n', buffer, 15);
-        pouringTime = atoi(buffer);
-        EEPROM.write(EEPROM_POURING_TIME, pouringTime >> 8);
-        EEPROM.write(EEPROM_POURING_TIME + 1, pouringTime & 0xff);
-        Serial.print("New pouring time set ");
-        Serial.print(pouringTime);
-        Serial.println("ms");
+        pouredWeight = atoi(buffer);
+        EEPROM.write(EEPROM_POURING_TIME, pouredWeight >> 8);
+        EEPROM.write(EEPROM_POURING_TIME + 1, pouredWeight & 0xff);
+        Serial.print("New pouring weight set ");
+        Serial.print(pouredWeight);
+        Serial.println(" g");
         Serial.setTimeout(1000);
         break;
       case '2':
                                                                                                       //need NEW make pouringTime Into Loadcell value
-        Serial.print("Current pouring time: ");
+        Serial.print("Current pouring weight: ");
         Serial.print((EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1));
-        Serial.println("ms");
+        Serial.println(" g");
         Serial.print("Serving mode: ");
         Serial.println(EEPROM.read(EEPROM_MODE));
         Serial.print("Serving type: ");
@@ -341,8 +341,8 @@ void loop()
     //    Serial.print(digitalRead(INPUT_CUP));
         Serial.print(", ARM_CONTACT=");
         Serial.print(digitalRead(INPUT_ARM_CONTACT));
-        Serial.print(", FLOW=");
-        Serial.println(digitalRead(INPUT_FLOW));
+ //      Serial.print(", FLOW=");
+ //       Serial.println(digitalRead(INPUT_FLOW));
         break;
       case '5':
         Serial.println("Change serving mode: 0 = manual (must click on button), 1 = automatic");
@@ -461,8 +461,8 @@ return_codes stateWaitingCup()
             break;
           case 1:
                                                                                                           //NEW pouringTime will be a bonus data with the load cell
-            itoa(pouringTime, message, 10);
-            lcd(message, "temps de debit");
+            itoa(pouredWeight, message, 10);
+            lcd(message, "masse a debiter");
             break;
         }
         showConfigState = (showConfigState + 1) & 1;
@@ -613,7 +613,7 @@ return_codes statePouring()
 {
   // the liquid has reached the flow sensor, start timing, make sure cup is still there
   uint32_t start = millis();
-  uint32_t time = start + pouringTime;
+//  uint32_t time = start + pouringTime;
   uint32_t bowTieTime = start + TIME_BOWTIE_TOGGLE;
   uint32_t now;
   uint8_t percent;
@@ -658,9 +658,9 @@ return_codes statePouring()
   
   // actually start pouring
   start = millis();
-  time = start + pouringTime;
+//  time = start + pouringTime;
   bowTieTime = start + TIME_BOWTIE_TOGGLE;
-  uint32_t MassCupFull = MassCupEmpty + MASS_LIQUID_PUMPED;    //!!!!!!!!!!!!!!!!!!!!!!!!
+  uint32_t MassCupFull = MassCupEmpty + pouredWeight;    //!!!!!!!!!!!!!!!!!!!!!!!!
   while(SCALE_VALUE < MassCupFull)              //!!!!!!!!!!!!!!!!!!!!!!!!
   {
     // check for cup presence
@@ -691,7 +691,7 @@ return_codes statePouring()
       }
       
       // display feedback on lcd: in % when pouring and timeout in case of fail
-      percent = 100 * (now - start) / pouringTime;
+      percent = 100 * (SCALE_VALUE - MassCupEmpty) / pouredWeight;
       memset(progress, 0, sizeof(progress));
       itoa(percent, progress, 10);
       if(percent < 10)
@@ -748,8 +748,11 @@ return_codes stateMovingRightArmOut()
   
   // display information on the lcd
   lcd("C'est pret!", "...");
+
+  Serial.println("Weight in hand after serving is ");
+  Serial.print(SCALE_VALUE);
   
-  moveArmServo(servoArmLeft, SERVO_ARM_LEFT_HALF_OPEN, SERVO_ARM_SPEED);
+ // moveArmServo(servoArmLeft, SERVO_ARM_LEFT_HALF_OPEN, SERVO_ARM_SPEED);
   moveArmServo(servoArmRight, SERVO_ARM_RIGHT_OPEN, SERVO_ARM_SPEED);
   
   return OK;

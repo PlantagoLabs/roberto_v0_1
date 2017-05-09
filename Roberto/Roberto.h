@@ -36,7 +36,7 @@
 #define TIME_BOWTIE_TOGGLE 500
 #define TIME_BOWTIEMOVE 2000
 #define TIME_LIQUID_SENSOR_REACH 2000
-#define TIME_DRIP_WAIT 5000
+#define TIME_DRIP_WAIT 10000
 #define TIME_WAIT_AFTER_CUP_REMOVE 2000
 #define TIME_LCD_UPDATE 2000
 #define TIME_LED_DISCO 200
@@ -62,8 +62,8 @@
 #define MODE_AUTOMATIC 1
 
 // input pin definitions
-//#define INPUT_CUP           0          // need to change to be a value for the load cell
-#define INPUT_FLOW          1
+//#define INPUT_CUP                    // need to change to be a value for the load cell
+//#define INPUT_FLOW         
 #define INPUT_BUTTON        10         // need to change to have two buttons
 //#define INPUT_BUTTON_2               // need to change to have two buttons             // !!!
 #define INPUT_ARM_CONTACT   0
