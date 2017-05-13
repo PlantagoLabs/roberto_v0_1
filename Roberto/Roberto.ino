@@ -73,8 +73,39 @@ float calibration_factor = 6260;                //Calibration factor found by te
 
 void setup()
 {
+/*
+Serial.begin(9600);
+  pinMode(OUTPUT_PUMP_1, OUTPUT);
+  pinMode(OUTPUT_PUMP_2, OUTPUT);
 
+  pinMode(OUTPUT_EYE_LEFT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_LEFT_BLUE, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_RED, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_GREEN, OUTPUT);
+  pinMode(OUTPUT_EYE_RIGHT_BLUE, OUTPUT);
+  while(1)
+  {
+    if(COND_BUTTON_1_PRESSED)
+    {
+        MACRO_PUMP_1_ON;
+        delay(1000);
+        MACRO_PUMP_1_OFF;
+        Serial.println("button 1");
+    }
+    else if (COND_BUTTON_2_PRESSED)
+    {
+      eyes(1,1,1);
+       // MACRO_PUMP_2_ON;
+        delay(1000);
+       // MACRO_PUMP_2_OFF;
+       eyes(0,0,0);
+       Serial.println("button 2");
+    }
 
+    delay(100);
+  }
+  */
 
 /* Serial.begin(9600);
 
@@ -165,7 +196,8 @@ while(1)
 // ******************************************************** END DEBUG ************************************** !!!!!!  */
 
 
-  pinMode(OUTPUT_PUMP, OUTPUT);
+  pinMode(OUTPUT_PUMP_1, OUTPUT);
+  pinMode(OUTPUT_PUMP_2, OUTPUT);
   pinMode(OUTPUT_EYE_LEFT_RED, OUTPUT);
   pinMode(OUTPUT_EYE_LEFT_GREEN, OUTPUT);
   pinMode(OUTPUT_EYE_LEFT_BLUE, OUTPUT);
@@ -174,7 +206,8 @@ while(1)
   pinMode(OUTPUT_EYE_RIGHT_BLUE, OUTPUT);
 
   pinMode(INPUT_ARM_CONTACT, INPUT);
-  
+  pinMode(INPUT_BUTTON_1, INPUT);
+  pinMode(INPUT_BUTTON_2, INPUT);
   // light up the eyes in red (debug)
   eyes(1, 0, 0);
 
@@ -203,6 +236,17 @@ while(1)
   pouredWeight = (EEPROM.read(EEPROM_POURING_TIME) << 8) | EEPROM.read(EEPROM_POURING_TIME + 1);
   liquidType = EEPROM.read(EEPROM_TYPE);
   servingMode = EEPROM.read(EEPROM_MODE);
+
+
+  // check the values we just read...
+  if(pouredWeight < 0 || pouredWeight > MAX_POURED_WEIGHT)
+    pouredWeight = DEFAULT_POURED_WEIGHT;
+
+  if(liquidType < 0 || liquidType > 1)
+    liquidType = 0;
+  if(servingMode != 0 && servingMode != 1)
+    servingMode = 1;
+
   
   // start i2c bus for LCD screen
   Wire.begin();
@@ -221,6 +265,9 @@ while(1)
 
   //Reset the scale to 0
   scale.tare(); 
+
+  MACRO_PUMP_1_OFF;
+  MACRO_PUMP_2_OFF;
 }
 
 void loop()
@@ -230,7 +277,7 @@ void loop()
 
   
   // debug mode shows the sensor values on lcd
-  if(debugMode)
+  if(debugMode != 0)
   {
     if(debugMode == 1)
     {
@@ -255,11 +302,11 @@ void loop()
       {
         case '1':
           Serial.println("Pump on");
-          MACRO_PUMP_ON;
+          MACRO_PUMP_1_ON;
           break;
         case '2':
           Serial.println("Pump off");
-          MACRO_PUMP_OFF;
+          MACRO_PUMP_1_OFF;
           break;
         case '3':
           Serial.println("LEDs on");
@@ -280,12 +327,13 @@ void loop()
 //    line1 += digitalRead(INPUT_FLOW);
     
     String line2 = "BTN: ";
-    line2 += digitalRead(INPUT_BUTTON);
+    line2 += digitalRead(INPUT_BUTTON_1);
     line2 += ", TOUCH: ";
     line2 += digitalRead(INPUT_ARM_CONTACT);
     
     lcd(line1.c_str(), line2.c_str());
     delay(200);
+    Serial.println(debugMode);
     return;
   }
   // current function to call according to the state machine
@@ -539,8 +587,15 @@ return_codes stateWaitingCup()
     if(servingMode == MODE_MANUAL)
     {
       lcd("Goblet insere", "Payer l'humain");
-      while(!COND_BUTTON_PRESSED)
+      while(!COND_BUTTON_1_PRESSED)
       {
+        if(COND_BUTTON_2_PRESSED)
+        {
+          Serial.println("Button 2 has been pressed.");
+          MACRO_PUMP_2_ON;
+          delay(1000);
+          MACRO_PUMP_2_OFF;
+        }
         if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))             //!!!
         {
           return REPEAT;
@@ -624,8 +679,8 @@ return_codes statePouring()
   Serial.println("State: pouring");
   eyes(0, 1, 0);
   
-  MACRO_PUMP_ON;
-
+  MACRO_PUMP_1_ON;
+  MACRO_PUMP_2_OFF;
   // timeout if there's no liquid after some time
   uint32_t timeout = millis() + TIME_LIQUID_SENSOR_REACH;
   uint32_t MassCupEmpty = SCALE_VALUE;
@@ -635,7 +690,7 @@ return_codes statePouring()
     if(millis() > timeout)
     {
       eyes(1, 0, 0);
-      MACRO_PUMP_OFF;
+      MACRO_PUMP_1_OFF;
       lcd("Erreur: timeout", "liquide");
       Serial.println("Error: timeout while pumping liquid");
       return FAIL;
@@ -645,7 +700,7 @@ return_codes statePouring()
     if(!(SCALE_VALUE > MIN_VAL_MASS_CUP_DETEC))
     {
       eyes(1, 0, 0);
-      MACRO_PUMP_OFF;
+      MACRO_PUMP_1_OFF;
       lcd("Erreur: goblet", "enleve");
       Serial.println("Error: cup was removed");
       delay(TIME_EAR_MOVE_CUP_REMOVE);
@@ -668,7 +723,7 @@ return_codes statePouring()
     {
       eyes(1, 0, 0);
       // stop pump
-      MACRO_PUMP_OFF;
+      MACRO_PUMP_1_OFF;
       // reset bow tie
       servoBowTie.write(SERVO_BOWTIE_CENTER);
       lcd("Erreur: goblet", "enleve");
@@ -720,7 +775,7 @@ return_codes statePouring()
   lcd("Preparation", "100%");
   
   // shut off the pump
-  MACRO_PUMP_OFF;
+  MACRO_PUMP_1_OFF;
   
   // turn the LED off to show when exactly the pump was turned off
 //  LED_OFF;

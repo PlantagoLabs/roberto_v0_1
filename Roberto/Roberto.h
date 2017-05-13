@@ -64,14 +64,15 @@
 // input pin definitions
 //#define INPUT_CUP                    // need to change to be a value for the load cell
 //#define INPUT_FLOW         
-#define INPUT_BUTTON        10         // need to change to have two buttons
-//#define INPUT_BUTTON_2               // need to change to have two buttons             // !!!
+#define INPUT_BUTTON_1        10         // need to change to have two buttons
+#define INPUT_BUTTON_2      11         // need to change to have two buttons             // !!!
 #define INPUT_ARM_CONTACT   0
 #define INPUT_SCALE_DAT     13          // need to change to have
 #define INPUT_SCALE_CLK     12          // need to change to have
 
 // output pin definitions
-#define OUTPUT_PUMP             9
+#define OUTPUT_PUMP_1             9
+#define OUTPUT_PUMP_2           1
 #define OUTPUT_EYE_LEFT_RED     A3 // was A2
 #define OUTPUT_EYE_LEFT_GREEN   A4 // was A1
 #define OUTPUT_EYE_LEFT_BLUE    A5
@@ -90,17 +91,21 @@
 // condition macros
 #define SCALE_VALUE             scale.get_units()
 #define MIN_VAL_MASS_CUP_DETEC  10.0f                         //Mass of PP Cup
-#define MASS_LIQUID_PUMPED      150.0f                       //Mass in gram 
+#define MAX_POURED_WEIGHT         250
+#define DEFAULT_POURED_WEIGHT      150                       //Mass in gram 
 ///#define COND_CUP_IS_PRESENT  digitalRead(INPUT_CUP)          // need to change. 
 
 #define COND_ARMS_TOUCH digitalRead(INPUT_ARM_CONTACT)
 
 #define COND_LIQUID_DETECT digitalRead(INPUT_FLOW)          // need to change, no flow detector  ///!!!
-#define COND_BUTTON_PRESSED digitalRead(INPUT_BUTTON) 
+#define COND_BUTTON_1_PRESSED !digitalRead(INPUT_BUTTON_1) 
+#define COND_BUTTON_2_PRESSED !digitalRead(INPUT_BUTTON_2)
 
 // other macros
-#define MACRO_PUMP_ON digitalWrite(OUTPUT_PUMP, HIGH)
-#define MACRO_PUMP_OFF digitalWrite(OUTPUT_PUMP, LOW)
+#define MACRO_PUMP_1_ON digitalWrite(OUTPUT_PUMP_1, HIGH)
+#define MACRO_PUMP_1_OFF digitalWrite(OUTPUT_PUMP_1, LOW)
+#define MACRO_PUMP_2_ON digitalWrite(OUTPUT_PUMP_2, HIGH)
+#define MACRO_PUMP_2_OFF digitalWrite(OUTPUT_PUMP_2, LOW)
 //#define LED_ON digitalWrite(LED, HIGH)
 //#define LED_OFF digitalWrite(LED, LOW)
 
