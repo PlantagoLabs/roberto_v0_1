@@ -14,15 +14,15 @@ There are 2 configurations for the robot, it usually server either syrup during 
 
 Configuration commands:
 
-| Command | Action                                          | Parameters                |
-|---------|-------------------------------------------------|---------------------------|
-| 1       | Set new pouring time                            | n (pouring time in ms)    |
-| 2       | Check configuration                             |                           |
-| 3       | Read how many times the pump has been activated |                           |
-| 4       | Show sensor values                              |                           |
-| 5       | Change mode                                     | 0 = automatic, 1 = manual |
-| 6       | Change type                                     | 0 = Ricard, 1 = syrup     |
-| 7       | Enable debug mode                               |                           |
+| Command | Action                                          | Parameters                   			|
+|---------|-------------------------------------------------|---------------------------------------|
+| 1       | Set new pouring weight                          | n (pouring weight in g, int) 			|
+| 2       | Check configuration                             |                              			|
+| 3       | Read how many times the pump has been activated |                              			|
+| 4       | Show sensor values                              |                              			|
+| 5       | Change mode                                     | 0 = automatic, 1 = manual    			|
+| 6       | Change type                                     | 0 = Ricard, 1 = syrup    (unused)    	|
+| 7       | Enable debug mode                               |                              			|
 
 So for example to set the pouring time the user first sends `1` to select the command and then sends the pouring time in milliseconds (ex: `2000`).
 
@@ -48,13 +48,16 @@ The ears and hands are 3d printed. Only the ears are available as the others hav
 
 The power system has been revised in May 2016, leading to the design of a new pump drive PCB featuring a MOSFET transistor. DC 5V regulation is now performed by Robopoly’s Power-Board instead of not-so-efficient linear regulators.
 
+In 2017, a second pump was added. The pumps are driven by having stacked PCBs from 2016. Furthermore, a shield made from veroboard was made. It works as a normal shield instead of an "inverted shield". This way if the Prismino dies, any other can be used. 
+Also, the amount of liquid to be poured is now measured using a scale instead of a timer (ie no measurement). This required the hand to be redesigned and the design can be found on the Fusion360 account of Robopoly.
+
 ## Credits
 
 This project has been an ongoing one and a lot of people have been working on it without whom this wonderful robot would've never existed.
 
-| Contribution       | Name                              				|
-|--------------------|-------------------------------------------------------------|
-| Creator            | Steven Roelofsen                  				|
-| Programmer         | Karl Kangur                       				|
-| Electronics        | Marco Pagnamenta, Benjamin Bonnal, Paul-Edouard Sarlin 	|
-| Cabling, mechanics | Lobsang Blanchard                 				|
+| Contribution       | Name                              										|
+|--------------------|--------------------------------------------------------------------------|
+| Creator            | Steven Roelofsen                  										|
+| Programmers        | Karl Kangur, Taavet Kangur, Patrick Bobbink								|
+| Electronics        | Marco Pagnamenta, Benjamin Bonnal, Paul-Edouard Sarlin, Patrick Bobbink 	|
+| Cabling, mechanics | Lobsang Blanchard, Patrick Bobbink				           				|
