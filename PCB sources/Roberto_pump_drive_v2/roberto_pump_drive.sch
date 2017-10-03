@@ -1,0 +1,234 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:common_sch
+LIBS:roberto_pump_drive-cache
+EELAYER 25 0
+EELAYER END
+$Descr User 5827 4134
+encoding utf-8
+Sheet 1 1
+Title "Roberto - Pump switch board"
+Date "2016-05-05"
+Rev "v1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L CONN_01X02 P2
+U 1 1 572C4D94
+P 4300 700
+F 0 "P2" H 4300 850 50  0000 C CNN
+F 1 "POWER_CONN" V 4400 700 50  0000 C CNN
+F 2 "Common_footprints:conn_green_2" H 4300 700 50  0001 C CNN
+F 3 "" H 4300 700 50  0000 C CNN
+	1    4300 700 
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Q_NMOS_DGS Q1
+U 1 1 572C807A
+P 3650 1600
+F 0 "Q1" H 3950 1600 50  0000 R CNN
+F 1 "NMOS_DGS" H 3700 1750 50  0000 R CNN
+F 2 "TO_SOT_Packages_THT:TO-220_Neutral123_Vertical_LargePads" H 3850 1700 50  0001 C CNN
+F 3 "" H 3650 1600 50  0000 C CNN
+	1    3650 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L +12V #PWR01
+U 1 1 572C837E
+P 3750 750
+F 0 "#PWR01" H 3750 600 50  0001 C CNN
+F 1 "+12V" H 3750 890 50  0000 C CNN
+F 2 "" H 3750 750 50  0000 C CNN
+F 3 "" H 3750 750 50  0000 C CNN
+	1    3750 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR02
+U 1 1 572C839E
+P 3750 2200
+F 0 "#PWR02" H 3750 1950 50  0001 C CNN
+F 1 "GND" H 3750 2050 50  0000 C CNN
+F 2 "" H 3750 2200 50  0000 C CNN
+F 3 "" H 3750 2200 50  0000 C CNN
+	1    3750 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R2
+U 1 1 572C86E2
+P 3200 1800
+F 0 "R2" V 3100 1800 50  0000 C CNN
+F 1 "1M" V 3200 1800 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 3130 1800 50  0001 C CNN
+F 3 "" H 3200 1800 50  0000 C CNN
+	1    3200 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R1
+U 1 1 572C8769
+P 3200 1400
+F 0 "R1" V 3100 1400 50  0000 C CNN
+F 1 "330" V 3200 1400 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 3130 1400 50  0001 C CNN
+F 3 "" H 3200 1400 50  0000 C CNN
+	1    3200 1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L PWR_FLAG #FLG03
+U 1 1 572C8B7D
+P 4700 1550
+F 0 "#FLG03" H 4700 1645 50  0001 C CNN
+F 1 "PWR_FLAG" H 4700 1730 50  0000 C CNN
+F 2 "" H 4700 1550 50  0000 C CNN
+F 3 "" H 4700 1550 50  0000 C CNN
+	1    4700 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L PWR_FLAG #FLG04
+U 1 1 572C8BA0
+P 4700 1050
+F 0 "#FLG04" H 4700 1145 50  0001 C CNN
+F 1 "PWR_FLAG" H 4700 1230 50  0000 C CNN
+F 2 "" H 4700 1050 50  0000 C CNN
+F 3 "" H 4700 1050 50  0000 C CNN
+	1    4700 1050
+	1    0    0    -1  
+$EndComp
+$Comp
+L +12V #PWR05
+U 1 1 572C8BC3
+P 4700 1050
+F 0 "#PWR05" H 4700 900 50  0001 C CNN
+F 1 "+12V" H 4700 1190 50  0000 C CNN
+F 2 "" H 4700 1050 50  0000 C CNN
+F 3 "" H 4700 1050 50  0000 C CNN
+	1    4700 1050
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR06
+U 1 1 572C8C1A
+P 4700 1550
+F 0 "#PWR06" H 4700 1300 50  0001 C CNN
+F 1 "GND" H 4700 1400 50  0000 C CNN
+F 2 "" H 4700 1550 50  0000 C CNN
+F 3 "" H 4700 1550 50  0000 C CNN
+	1    4700 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L mounting_hole_3.2 H1
+U 1 1 572CEB85
+P 1300 1100
+F 0 "H1" H 1025 1000 60  0000 C CNN
+F 1 "mounting_hole_3.2" H 1325 800 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_3.2mm_M3_ISO7380_Pad" H 1300 1100 60  0001 C CNN
+F 3 "" H 1300 1100 60  0000 C CNN
+	1    1300 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L mounting_hole_3.2 H2
+U 1 1 572CEBB5
+P 1300 1800
+F 0 "H2" H 1025 1700 60  0000 C CNN
+F 1 "mounting_hole_3.2" H 1325 1500 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_3.2mm_M3_ISO7380_Pad" H 1300 1800 60  0001 C CNN
+F 3 "" H 1300 1800 60  0000 C CNN
+	1    1300 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_01X02 P1
+U 1 1 572CEED2
+P 3250 700
+F 0 "P1" H 3250 850 50  0000 C CNN
+F 1 "SIGNAL_CONN" V 3350 700 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02" H 3250 700 50  0001 C CNN
+F 3 "" H 3250 700 50  0000 C CNN
+	1    3250 700 
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P3
+U 1 1 57306AAF
+P 3950 1200
+F 0 "P3" H 3950 1350 50  0000 C CNN
+F 1 "PUMP_CONN" V 4050 1200 50  0000 C CNN
+F 2 "Common_footprints:conn_green_2" H 3950 1200 50  0001 C CNN
+F 3 "" H 3950 1200 50  0000 C CNN
+	1    3950 1200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3750 900  4250 900 
+Wire Wire Line
+	3750 750  3750 1150
+Connection ~ 3750 900 
+Wire Wire Line
+	3200 1550 3200 1650
+Wire Wire Line
+	3200 1600 3450 1600
+Connection ~ 3200 1600
+Wire Wire Line
+	4350 2150 4350 900 
+Wire Wire Line
+	3200 900  3200 1250
+Wire Wire Line
+	1600 1100 2100 1100
+Wire Wire Line
+	1600 1800 2100 1800
+Connection ~ 2100 1800
+Wire Wire Line
+	2100 2150 4350 2150
+Connection ~ 3750 2150
+Wire Wire Line
+	2100 1100 2100 2150
+Connection ~ 3200 2150
+Wire Wire Line
+	3750 1250 3750 1400
+Wire Wire Line
+	3750 1800 3750 2150
+Wire Wire Line
+	3200 1950 3200 2150
+Wire Wire Line
+	3300 900  3200 900 
+$EndSCHEMATC
